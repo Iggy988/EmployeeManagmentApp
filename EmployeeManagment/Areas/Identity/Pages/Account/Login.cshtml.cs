@@ -8,12 +8,12 @@ namespace EmployeeManagment.Areas.Identity.Pages.Account;
 public class LoginModel : PageModel
 {
     private readonly SignInManager<IdentityUser> _signInManager;
-    private readonly UserManager<IdentityUser> _userManager;
 
-    public LoginModel(SignInManager<IdentityUser> signInManager, UserManager<IdentityUser> userManager)
+
+    public LoginModel(SignInManager<IdentityUser> signInManager)
     {
         _signInManager = signInManager;
-        _userManager = userManager;
+
     }
 
     
@@ -32,6 +32,10 @@ public class LoginModel : PageModel
         if (ModelState.IsValid)
         {
             var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, isPersistent: false, lockoutOnFailure: false);
+            if (result.Succeeded)
+            {
+                return LocalRedirect("~/");
+            }
         }
         return Page();
     }
