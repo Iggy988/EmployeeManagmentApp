@@ -1,32 +1,49 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.ComponentModel.DataAnnotations;
 
-namespace EmployeeManagment.Areas.Identity.Pages.Account
+namespace EmployeeManagment.Areas.Identity.Pages.Account;
+
+public class LoginModel : PageModel
 {
-    public class LoginModel : PageModel
+    private readonly SignInManager<IdentityUser> _signInManager;
+    private readonly UserManager<IdentityUser> _userManager;
+
+    public LoginModel(SignInManager<IdentityUser> signInManager, UserManager<IdentityUser> userManager)
     {
-        [BindProperty]
-        public InputModel Input { get; set; }
-
-        public void OnGet()
-        {
-        }
-
-        public async Task<IActionResult> OnPostAsync()
-        {
-            return Page();
-        }
+        _signInManager = signInManager;
+        _userManager = userManager;
     }
 
-    public class InputModel
-    {
-        [Required]
-        [EmailAddress]
-        public string Email { get; set; }
+    
 
-        [Required]
-        [DataType(DataType.Password)]
-        public string Password { get; set; }
+
+
+    [BindProperty]
+    public InputModel Input { get; set; }
+
+    public void OnGet()
+    {
     }
+
+    public async Task<IActionResult> OnPostAsync()
+    {
+        if (ModelState.IsValid)
+        {
+            var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, isPersistent: false, lockoutOnFailure: false);
+        }
+        return Page();
+    }
+}
+
+public class InputModel
+{
+    [Required]
+    [EmailAddress]
+    public string Email { get; set; }
+
+    [Required]
+    [DataType(DataType.Password)]
+    public string Password { get; set; }
 }

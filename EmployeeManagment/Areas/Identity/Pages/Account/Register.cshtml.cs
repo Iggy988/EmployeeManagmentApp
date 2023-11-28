@@ -28,6 +28,12 @@ public class RegisterModel : PageModel
         {
             var identity = new IdentityUser { UserName = Input.Email, Email = Input.Email };
             var result = await _userManager.CreateAsync(identity, Input.Password);
+
+            if (result.Succeeded)
+            {
+                await _signInManager.SignInAsync(identity, isPersistent: true);
+                return LocalRedirect("~/");
+            }
         }
         return Page();
     }
