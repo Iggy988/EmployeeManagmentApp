@@ -10,5 +10,10 @@ namespace EmployeeManagment.Areas.Identity.Pages.Account
         public void OnGet()
         {
         }
+
+        public async Task<IActionResult> OnPostAsync()
+        {
+            return Page();
+        }
     }
 }
