@@ -8,23 +8,21 @@ namespace EmployeeManagment.Data;
 public class DataContext : IdentityDbContext
 {
     public DbSet<Employee> Employees { get; set; }
-    public DataContext(DbContextOptions options) : base(options)
-    {
-        
-    }
+    public DataContext(DbContextOptions options) : base(options) { }
 
-    protected override void OnModelCreating(ModelBuilder builder)
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        base.OnModelCreating(builder);
-        builder.Entity<Employee>().HasData(GetEmployees());
+        base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<Employee>().HasData(GetEmployees());
     }
 
     private List<Employee> GetEmployees()
     {
         var employees = new List<Employee>();
-        var faker = new Faker("en");
+        var faker = new Faker("en"); // Specify the language for name generation
 
-        for (int i = 0; i <= 50; i++)
+        for (int i = 1; i <= 50; i++)
         {
             var employee = new Employee
             {
@@ -38,6 +36,7 @@ public class DataContext : IdentityDbContext
 
             employees.Add(employee);
         }
+
         return employees;
     }
 
@@ -53,7 +52,6 @@ public class DataContext : IdentityDbContext
     {
         var random = new Random();
         var types = Enum.GetValues(typeof(EmployeeType));
-        
         return (EmployeeType)types.GetValue(random.Next(types.Length));
     }
 
