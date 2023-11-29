@@ -17,9 +17,6 @@ public class LoginModel : PageModel
     }
 
     
-
-
-
     [BindProperty]
     public InputModel Input { get; set; }
 
