@@ -1,6 +1,7 @@
 
 
 using EmployeeManagment.Data;
+using EmployeeManagment.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,6 +10,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
+
+builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");

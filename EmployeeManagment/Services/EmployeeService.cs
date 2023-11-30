@@ -19,9 +19,28 @@ public class EmployeeService : IEmployeeService
     }
 
 
-    public Task<GetEmployeesResponse> GetEmployees()
+    public async Task<GetEmployeesResponse> GetEmployees()
     {
-        throw new NotImplementedException();
+        var response = new GetEmployeesResponse();
+
+        try
+        {
+            using (var context = _factory.CreateDbContext())
+            {
+                var employees = await context.Employees.ToListAsync();
+                response.Employees = employees;
+                response.StatusCode = 200;
+                response.Message = "Success";
+            }
+        }
+        catch (Exception ex)
+        {
+            response.StatusCode = 500;
+            response.Message = "Error retrieving employees: "+ex.Message;
+            response.Employees = null;
+        }
+
+        return response;
     }
 }
     

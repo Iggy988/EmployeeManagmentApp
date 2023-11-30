@@ -1,0 +1,42 @@
+﻿@page "/"
+@using EmployeeManagment.Models
+@using EmployeeManagment.Services
+
+@if (_employees != null)
+{
+    <Card>
+        <div class="table-responsive">
+            <table class="table table-borderless mb-0">
+                <tbody>
+                    @foreach (var employee in _employees)
+                    {
+                        <tr class="shadow-lg m-1 employee-row mb-5">
+                            <td class="centered-cell"><img class="round-image" width="60" src="@employee.ImgUrl" /></td>
+                            <td>
+                                <div class="pt-2">
+                                    <div class="employee-name centered-subdiv">@employee.Name</div>
+                                    <div class="employee-position centered-subdiv">@employee.Position.GetDisplayName()</div>
+                                </div>
+                            </td>
+                            <td class="centered-cell @GetEmployeeTypeStyle(employee.Type)">@employee.Type.GetDisplayName()</td>
+                            <td class="centered-cell employee-salary">$@employee.Salary</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </Card>
+}
+
+@code {
+    [Inject]
+    private IEmployeeService EmployeeService { get; set; }
+
+    private List<Employee>? _employees;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var response = await EmployeeService.GetEmployees();
+        _employees = response.Employees;
+    }
+}
