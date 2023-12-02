@@ -4,8 +4,10 @@ using EmployeeManagment.Data;
 using EmployeeManagment.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Syncfusion.Blazor;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddSyncfusionBlazor();
 
 // Add services to the container.
 builder.Services.AddRazorPages();

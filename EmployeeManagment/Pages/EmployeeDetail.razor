@@ -85,5 +85,9 @@
         NavigationManager.NavigateTo($"/");
     }
 
-
+    private async Task DeleteEmployee()
+    {
+        var response = await EmployeeService.DeleteEmployee(Employee);
+        NavigationManager.NavigateTo($"/");
+    }
 }
