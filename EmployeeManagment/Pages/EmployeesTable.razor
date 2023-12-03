@@ -2,10 +2,20 @@
 @using EmployeeManagment.Models
 @using EmployeeManagment.Services
 
+
+@if (ShowWarning)
+{
+    <Warning OnClickCallback="DismissWarning" Type="Warning.WarningType.Error" Message="@ErrorMessage" />
+}
+
 @if (_employees != null)
 {
     <Card>
         <div class="table-responsive">
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control" id="floatingInput" placeholder="Name here" @oninput="FilterEmployees" />
+                <label for="floatingInput">Filter by name</label>
+            </div>
             <table class="table table-borderless mb-0">
                 <tbody>
                     @foreach (var employee in _employees)
@@ -15,7 +25,7 @@
                             <td>
                                 <div class="pt-2">
                                     <div class="employee-name centered-subdiv">@employee.Name</div>
-                                    <div class="employee-position centered-subdiv">@employee.Position</div>
+                                    <div class="employee-position centered-subdiv">@employee.Position.GetDisplayName()</div>
                                 </div>
                             </td>
                             <td class="centered-cell @GetEmployeeTypeStyle(employee.Type)">@employee.Type.GetDisplayName()</td>
@@ -39,11 +49,27 @@
     private NavigationManager NavigationManager { get; set; }
 
     private List<Employee>? _employees;
+    private List<Employee>? _employeesBackup;
+
+    private bool ShowWarning = false;
+    private string ErrorMessage = "";
 
     protected override async Task OnInitializedAsync()
     {
         var response = await EmployeeService.GetEmployees();
-        _employees = response.Employees;
+
+        if (response.StatusCode == 500)
+        {
+            ShowWarning = true;
+            ErrorMessage = response.Message;
+        }
+        else
+        {
+            _employees = response.Employees;
+            _employeesBackup = _employees;
+        }
+
+        
     }
 
     private string GetEmployeeTypeStyle(EmployeeType employeeType) => employeeType switch
@@ -58,6 +84,19 @@
     {
         // Navigate to the user page using the user ID
         NavigationManager.NavigateTo($"/employee/{employeeId}");
+    }
+
+    private void FilterEmployees(ChangeEventArgs e)
+    {
+        _employees = _employeesBackup;
+        _employees = _employees.Where(x => x.Name.IndexOf(e.Value.ToString(), StringComparison.OrdinalIgnoreCase) >= 0).ToList();
+    }
+
+
+    private void DismissWarning()
+    {
+        ShowWarning = false;
+        NavigationManager.NavigateTo($"identity/account/logout", true);
     }
 }
 

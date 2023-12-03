@@ -6,7 +6,7 @@
 
 @if (ShowWarning)
 {
-    
+    <Warning OnClickCallback="DismissWarning" Type="Warning_Type" Message="@Warning_Message" />
 }
 else
 {
@@ -105,17 +105,28 @@ else
         Employee.ImgUrl = addEmployeeForm.ImgUrl;
 
         var response = await EmployeeService.EditEmployee(Employee);
-        NavigationManager.NavigateTo($"/");
+        Warning_Type = response.StatusCode == 200 ? WarningType.Success : WarningType.Error;
+        Warning_Message = response.Message;
+        ShowWarning = true;
     }
 
     private async Task DeleteEmployee()
     {
         var response = await EmployeeService.DeleteEmployee(Employee);
         Warning_Type = response.StatusCode == 200 ? WarningType.Success : WarningType.Error;
-        NavigationManager.NavigateTo($"/");
+        Warning_Message = response.Message;
+        ShowDeleteModal = false;
+        ShowWarning = true;
+
     }
 
     private void ShowDeleteConfirmation() => ShowDeleteModal = true;
 
     private void CancelDelete() => ShowDeleteModal = false;
+
+    private void DismissWarning()
+    {
+        ShowWarning = false;
+        NavigationManager.NavigateTo($"/");
+    }
 }
